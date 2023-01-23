@@ -1,7 +1,8 @@
 const ethers = require('ethers')
-const http = require('node:http')
+const https = require('node:https')
+const pem = require('https-pem')
 
-const server = http.createServer()
+const server = https.createServer(pem)
 
 function createAddress() {
   const { address } = ethers.Wallet.createRandom()
@@ -20,11 +21,17 @@ server.on('request', (request, res) => {
       break;
   }
 
-  res.end(JSON.stringify({
+  const result = {
     code: 200,
     msg: 'success',
     data
-  }))
+  }
+
+  console.log('result', result)
+
+  res.setHeader('Access-Control-Allow-Origin', '*')
+
+  res.end(JSON.stringify(result))
 });
 
 server.listen(10122, () => {
